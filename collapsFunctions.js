@@ -36,7 +36,7 @@ function eraseCookie(name) {
 }
 
 function addExpandCollapse(id, expandSym, collapseSym, accordion) {
-  jQuery('#' + id + ' .expand').live('click', function() {
+  jQuery('body').on('click', '#' + id + ' .expand' , function() {
     if (accordion==1) {
       var theDiv = jQuery(this).parent().parent().find('span.collapse').parent().find('div');
       jQuery(theDiv).hide('normal');
@@ -47,7 +47,7 @@ function addExpandCollapse(id, expandSym, collapseSym, accordion) {
     expandCat(this, expandSym, collapseSym);
     return false;
   });
-  jQuery('#' + id + ' .collapse').live('click', function() {
+  jQuery('body').on('click', '#' + id + ' .collapse' , function() {
     collapseCat(this, expandSym, collapseSym);
     return false;
   });

@@ -377,7 +377,7 @@ function collapscat_catfilter($categories, $taxonomy, $args) {
     }
     global $options;
     extract($options);
-    error_log('$inExcludeCats='.json_encode($inExcludeCats, JSON_PRETTY_PRINT));
+    # error_log('$inExcludeCats='.json_encode($inExcludeCats, JSON_PRETTY_PRINT));
     $inExclusionArray = array();
     if (!empty($inExcludeCats)) {
         $exterms = preg_split('/\s*[,]+\s*/', $inExcludeCats);
@@ -391,16 +391,16 @@ function collapscat_catfilter($categories, $taxonomy, $args) {
     $result = array();
     if ($inExclude == 'exclude' && !empty($inExclusionArray)) {
         $ancesterCategory = get_category($inExclusionArray[0]);
-        error_log('$ancesterCategory='.json_encode($ancesterCategory, JSON_PRETTY_PRINT));
+        # error_log('$ancesterCategory='.json_encode($ancesterCategory, JSON_PRETTY_PRINT));
         foreach ($categories as $key => $value) {
-            error_log('$key='.$key.', $value='.json_encode($value, JSON_PRETTY_PRINT));
+            # error_log('$key='.$key.', $value='.json_encode($value, JSON_PRETTY_PRINT));
             if (cat_is_ancestor_of($ancesterCategory->term_id, $value->term_id)) {
-                error_log('found $key='.$key.', $value='.json_encode($value, JSON_PRETTY_PRINT));
+                # error_log('found $key='.$key.', $value='.json_encode($value, JSON_PRETTY_PRINT));
                 $result[$key] = $value;
             }
         }
     }
-    error_log('filtered categories='.json_encode($result, JSON_PRETTY_PRINT));
+    # error_log('filtered categories='.json_encode($result, JSON_PRETTY_PRINT));
     return $result;
 }
 
@@ -523,7 +523,7 @@ function get_collapscat_fromdb($args = '') {
     }
     $args['plugin_guard'] = true;
     $categories = get_terms($taxonomy, $args); // get_terms($taxonomy, $args);
-    error_log('$categories='.json_encode($categories, JSON_PRETTY_PRINT));
+    # error_log('$categories='.json_encode($categories, JSON_PRETTY_PRINT));
     $totalPostCount = is_countable($posts) ? count($posts) : 0;
     if ($totalPostCount > 5000) {
         $options['showPosts'] = false;
@@ -544,7 +544,7 @@ function get_collapscat_fromdb($args = '') {
             array_push($parents, $cat->parent);
         }
     }
-    error_log('$parents='.json_encode($parents, JSON_PRETTY_PRINT));
+    # error_log('$parents='.json_encode($parents, JSON_PRETTY_PRINT));
     $includeCatArray = array_unique($includeCatArray);
     $postsToExclude = array();
     if ($excludeAll == 1) {
@@ -580,17 +580,17 @@ function list_categories($posts, $categories, $parents, $options) {
     global $collapsCatItems, $wpdb, $options, $wp_query, $autoExpand,
            $postsToExclude, $totalCatPostCount, $thisCatID,
            $cur_terms, $thisPost, $wp_rewrite, $catlink, $postsInCat;
-    error_log('listing categories, $posts='.json_encode($posts, JSON_PRETTY_PRINT).', $categories='.json_encode($categories, JSON_PRETTY_PRINT).', $parents='.json_encode($parents, JSON_PRETTY_PRINT).', $options='.json_encode($options, JSON_PRETTY_PRINT));
+    # error_log('listing categories, $posts='.json_encode($posts, JSON_PRETTY_PRINT).', $categories='.json_encode($categories, JSON_PRETTY_PRINT).', $parents='.json_encode($parents, JSON_PRETTY_PRINT).', $options='.json_encode($options, JSON_PRETTY_PRINT));
     extract($options);
     $collapsCatText = '';
     $cur_terms = array();
     if (is_single()) {
         $tmp_terms = wp_get_object_terms($wp_query->post->ID, $taxonomy);
-        error_log('$tmp_terms'.json_encode($tmp_terms, JSON_PRETTY_PRINT));
+        # error_log('$tmp_terms'.json_encode($tmp_terms, JSON_PRETTY_PRINT));
         foreach ($tmp_terms as $tmp_cat) {
             $cur_terms[] = $tmp_cat->term_id;
         }
-        error_log('$cur_terms='.json_encode($cur_terms, JSON_PRETTY_PRINT));
+        # error_log('$cur_terms='.json_encode($cur_terms, JSON_PRETTY_PRINT));
         $thisPost = $wp_query->post->ID;
         foreach ($categories as $cat) {
             if (!empty($cur_terms) && (in_array($cat->term_id, $cur_terms))) {
@@ -605,7 +605,7 @@ function list_categories($posts, $categories, $parents, $options) {
     }
     $catlink = $wp_rewrite->get_category_permastruct();
 
-    error_log('displaying categories='.json_encode($categories, JSON_PRETTY_PRINT));
+    # error_log('displaying categories='.json_encode($categories, JSON_PRETTY_PRINT));
     $inExclusionArray = array();
     if (!empty($inExcludeCats)) {
         $exterms = preg_split('/\s*[,]+\s*/', $inExcludeCats);
@@ -620,7 +620,7 @@ function list_categories($posts, $categories, $parents, $options) {
         $totalCatPostCount = 0;
         if ($inExclude == 'exclude' && !empty($inExclusionArray)) {
             if ($cat->parent != $inExclusionArray[0]) {
-                error_log('category '.$cat->term_id.' is not a direct child of top category '.$inExclusionArray[0].' quit');
+                // error_log('category '.$cat->term_id.' is not a direct child of top category '.$inExclusionArray[0].' quit');
                 continue;
             }
         }
@@ -648,7 +648,7 @@ function list_categories($posts, $categories, $parents, $options) {
         list($subCatPostCount2, $posttext2) = getSubPosts(isset($postsInCat[$cat->term_id]) ? $postsInCat[$cat->term_id] : array(), $cat, $showPosts);
 
         $theCount = $subCatPostCount2 + $totalCatPostCount;
-        error_log('catetory '.$cat->term_id.' has '.$theCount.' posts');
+        // error_log('catetory '.$cat->term_id.' has '.$theCount.' posts');
         if ($theCount > 0 || $showEmptyCat) {
             $expanded = 'none';
             $theID = 'collapsCat-' . $cat->term_id . ":$number";
@@ -672,7 +672,7 @@ function list_categories($posts, $categories, $parents, $options) {
             } else {
                 $span = "      <li class='collapsing categories item" . $self . "'>";
             }
-            error_log('display category '.$cat->term_id);
+            // error_log('display category '.$cat->term_id);
             $link = getCollapsCatLink($cat, $catlink);
             if (empty($cat->description)) {
                 $link .= 'title="' .
